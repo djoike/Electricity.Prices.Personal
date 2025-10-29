@@ -20,7 +20,6 @@ async function load() {
     if (mapped.length) {
       points.value = mapped;
       lastUpdated.value = new Date();
-      // Save in sessionStorage to reduce flicker on quick tab switches
       sessionStorage.setItem('prices-cache', JSON.stringify({ data: raw, ts: Date.now() }));
     } else {
       points.value = [];
@@ -32,8 +31,10 @@ async function load() {
   }
 }
 
+let intervalId: number | null = null;
+
 onMounted(() => {
-  // Try load from cache first (valid for 2 minutes)
+  // Load from cache (valid for 2 minutes)
   const cached = sessionStorage.getItem('prices-cache');
   if (cached) {
     try {
@@ -44,10 +45,22 @@ onMounted(() => {
       }
     } catch {}
   }
+
   load();
 
+  // Refresh on tab focus and on hidden hot-corner tap
   const teardown = setupRefresh(load);
-  onBeforeUnmount(() => teardown());
+
+  // 🔁 Also refresh every 30 seconds
+  intervalId = window.setInterval(load, 30000);
+
+  onBeforeUnmount(() => {
+    teardown();
+    if (intervalId != null) {
+      clearInterval(intervalId);
+      intervalId = null;
+    }
+  });
 });
 </script>
 
@@ -59,7 +72,7 @@ onMounted(() => {
       <HeaderInfo :last-updated="lastUpdated" />
     </header>
 
-    <main class="card" style="min-height: 40vh;">
+    <main class="card">
       <div v-if="error" class="error">Kunne ikke hente priser: {{ error }}</div>
       <div v-else-if="loading && !points.length">Henter priser…</div>
       <PriceChart v-else :points="points" />
@@ -73,5 +86,5 @@ onMounted(() => {
 </template>
 
 <style scoped>
-/* Scoped extras (keep global styles in SCSS) */
+/* keep scoped empty; styles in SCSS files */
 </style>

@@ -4,13 +4,12 @@
   color-scheme: light dark;
 }
 
-* {
-  box-sizing: border-box;
-}
+* { box-sizing: border-box; }
 
-html, body, #app {
-  height: 100%;
-}
+html, body, #app { height: 100%; }
+
+/* Only the chart area should scroll horizontally */
+html, body { overflow-x: hidden; }
 
 body {
   margin: 0;
@@ -49,12 +48,12 @@ body {
   background: var(--card);
   border-radius: 14px;
   padding: clamp(8px, 1.6vw, 16px);
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.12);
+  overflow-x: hidden; /* prevent the page from scrolling horizontally */
 }
 
-.chart-wrap {
-  height: min(64vh, 520px);
-}
+/* Let component control the chart height; remove global min-height */
+.chart-wrap { /* intentionally left without fixed height */ }
 
 .footer {
   color: var(--muted);
@@ -68,10 +67,8 @@ body {
 /* Invisible hot corner for manual refresh */
 .hot-corner {
   position: fixed;
-  top: 0;
-  right: 0;
-  width: 100px;   /* ⬅ increased clickable area */
-  height: 100px;  /* ⬅ increased clickable area */
+  top: 0; right: 0;
+  width: 100px; height: 100px;
   z-index: 50;
   background: transparent;
   -webkit-tap-highlight-color: transparent;
