@@ -19,9 +19,9 @@ Chart.register(BarElement, CategoryScale, LinearScale, Tooltip, Legend, ChartDat
 const props = defineProps<{ points: UiPoint[] }>();
 
 // ---- Visual constants ----
-const BAR_PX = 36;      // fixed bar width (px)
-const GAP_PX = 10;      // spacing between bars
-const CHART_HEIGHT = '70vh'; // height of the chart area
+const BAR_PX = 65;      // fixed bar width (px) — was 36, now 25% wider
+const GAP_PX = 30;      // spacing between bars
+const CHART_HEIGHT = '80vh'; // for reference; actual CSS sets height
 
 // ---- Palette ----
 const COLORS = {
@@ -150,7 +150,7 @@ const data = computed(() => {
 const options = computed(() => ({
   responsive: true,
   maintainAspectRatio: false,
-  layout: { padding: { top: 28 } },
+  layout: { padding: { top: 34 } }, // a bit more space for larger labels
   plugins: {
     legend: { display: false },
     tooltip: { enabled: false }, // 🔕 Disable hover tooltip
@@ -159,14 +159,12 @@ const options = computed(() => ({
         // Price (top)
         price: {
           display: true,
-          offset: 34,
+          offset: 44,  // was 34 — move up slightly for more space
           formatter: (_: any, ctx: any) => {
-            const p = (ctx.chart.data.datasets[ctx.datasetIndex].data as number[])[
-              ctx.dataIndex
-            ];
+            const p = (ctx.chart.data.datasets[ctx.datasetIndex].data as number[])[ctx.dataIndex];
             return formatPriceDKK(Number(p));
           },
-          font: { weight: 'bold', size: 13 },
+          font: { weight: 'bold', size: 17 },
           color: () => tickColor.value,
           textAlign: 'center',
           clip: false,
@@ -174,18 +172,16 @@ const options = computed(() => ({
         // Time (middle)
         time: {
           display: true,
-          offset: 20,
+          offset: 24,  // was 20 — small extra gap between price and time
           formatter: (_: any, ctx: any) => {
-            const ui = (ctx.chart.data as any).__uiPoints as
-              | UiPoint[]
-              | undefined;
+            const ui = (ctx.chart.data as any).__uiPoints as UiPoint[] | undefined;
             const { hour } =
               ui && ui[ctx.dataIndex]
                 ? weekdayHourParts(ui[ctx.dataIndex].iso)
                 : weekdayHourParts((props.points[ctx.dataIndex] || {}).iso);
             return `kl. ${hour}`;
           },
-          font: { size: 11 },
+          font: { size: 14 },
           color: () => tickColor.value,
           textAlign: 'center',
           clip: false,
@@ -193,19 +189,16 @@ const options = computed(() => ({
         // Day (bottom)
         day: {
           display: true,
-          offset: 6,
+          offset: 10,  // was 6 — adds extra space below
           formatter: (_: any, ctx: any) => {
-            const ui = (ctx.chart.data as any).__uiPoints as
-              | UiPoint[]
-              | undefined;
+            const ui = (ctx.chart.data as any).__uiPoints as UiPoint[] | undefined;
             const weekday =
               ui && ui[ctx.dataIndex]
                 ? weekdayHourParts(ui[ctx.dataIndex].iso).weekday
-                : weekdayHourParts((props.points[ctx.dataIndex] || {}).iso)
-                    .weekday;
+                : weekdayHourParts((props.points[ctx.dataIndex] || {}).iso).weekday;
             return String(weekday).toLowerCase();
           },
-          font: { size: 11 },
+          font: { size: 14 },
           color: () => dayColor.value,
           textAlign: 'center',
           clip: false,
