@@ -86,5 +86,5 @@ onMounted(() => {
 </template>
 
 <style scoped>
-/* keep scoped empty; styles in SCSS files*/
+/* keep scoped empty; styles in SCSS files */
 </style>
