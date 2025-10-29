@@ -95,11 +95,9 @@ const data = computed(() => {
       borderColor: cls.border,
       borderWidth: cls.bwidth,
       hoverBackgroundColor: cls.bg,
-      // IMPORTANT: keep the plugin ON for this dataset
       datalabels: {
         anchor: 'end',
         align: 'end',
-        // base offset; per-label offsets defined in options.plugins.datalabels.labels
       },
     }],
   };
@@ -108,7 +106,7 @@ const data = computed(() => {
 const options = computed(() => ({
   responsive: true,
   maintainAspectRatio: false,
-  layout: { padding: { top: 20 } }, // extra space for 3-line labels
+  layout: { padding: { top: 28 } },
   plugins: {
     legend: { display: false },
     tooltip: {
@@ -116,14 +114,11 @@ const options = computed(() => ({
         label: (ctx: any) => formatPriceDKK(ctx.parsed.y),
       },
     },
-    // Multiple stacked labels configured here
-    // See: https://chartjs-plugin-datalabels.netlify.app/guide/#multiple-labels
-    // @ts-expect-error plugin-specific options
     datalabels: {
       labels: {
         price: {
           display: true,
-          offset: 4,
+          offset: 34,
           formatter: (_: any, ctx: any) => {
             const p = (ctx.chart.data.datasets[ctx.datasetIndex].data as number[])[ctx.dataIndex];
             return formatPriceDKK(Number(p));
@@ -137,15 +132,11 @@ const options = computed(() => ({
           display: true,
           offset: 20,
           formatter: (_: any, ctx: any) => {
-            const dataset = ctx.chart.data.datasets[ctx.datasetIndex];
             const ui = (ctx.chart.data as any).__uiPoints as UiPoint[] | undefined;
-            // Fallback if we didn't stash UiPoints on the chart
-            if (ui && ui[ctx.dataIndex]) {
-              const { hour } = weekdayHourParts(ui[ctx.dataIndex].iso);
-              return `kl. ${hour}`;
-            }
-            // fallback using props (works because options is reactive within component scope)
-            const { hour } = weekdayHourParts((props.points[ctx.dataIndex] || {}).iso);
+            const { hour } =
+              ui && ui[ctx.dataIndex]
+                ? weekdayHourParts(ui[ctx.dataIndex].iso)
+                : weekdayHourParts((props.points[ctx.dataIndex] || {}).iso);
             return `kl. ${hour}`;
           },
           font: { size: 11 },
@@ -155,7 +146,7 @@ const options = computed(() => ({
         },
         day: {
           display: true,
-          offset: 34,
+          offset: 6,
           formatter: (_: any, ctx: any) => {
             const ui = (ctx.chart.data as any).__uiPoints as UiPoint[] | undefined;
             const weekday =
@@ -172,7 +163,7 @@ const options = computed(() => ({
       },
     },
   },
-    scales: {
+  scales: {
     x: {
       ticks: { display: false },
       grid: { display: false },
@@ -186,14 +177,15 @@ const options = computed(() => ({
       },
     },
   },
-}));
-  
-// Stash UiPoints on the chart data object for formatter access (no re-render cost)
+})); // ✅ only two parentheses here — closes computed()
+
+// Provide UiPoints to the options formatters
 watch(() => props.points, () => {
   (data.value as any).__uiPoints = props.points;
 });
 
 watch(() => [tickColor.value, gridColor.value], () => {});
+
 </script>
 
 <template>
