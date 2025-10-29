@@ -1,0 +1,94 @@
+@use 'variables';
+
+:root {
+  color-scheme: light dark;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html, body, #app {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+  background: var(--bg);
+  color: var(--text);
+}
+
+.container {
+  min-height: 100dvh;
+  padding: 12px clamp(10px, 3vw, 24px);
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  gap: 10px;
+}
+
+.header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.title {
+  font-size: clamp(18px, 3.8vw, 28px);
+  font-weight: 600;
+  letter-spacing: 0.2px;
+}
+
+.meta {
+  font-size: clamp(12px, 2.6vw, 14px);
+  color: var(--muted);
+}
+
+.card {
+  background: var(--card);
+  border-radius: 14px;
+  padding: clamp(8px, 1.6vw, 16px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+}
+
+.chart-wrap {
+  height: min(64vh, 520px);
+}
+
+.footer {
+  color: var(--muted);
+  font-size: clamp(11px, 2.3vw, 13px);
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  opacity: 0.9;
+}
+
+/* Invisible hot corner for manual refresh */
+.hot-corner {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 44px;
+  height: 44px;
+  z-index: 50;
+  background: transparent;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.error {
+  background: #fde8e8;
+  border: 1px solid #f5c2c2;
+  color: #7f1d1d;
+  border-radius: 10px;
+  padding: 10px 12px;
+}
+
+@media (prefers-color-scheme: dark) {
+  .error {
+    background: #3b1a1a;
+    border-color: #6d2b2b;
+    color: #ffcccc;
+  }
+}

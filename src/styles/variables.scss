@@ -1,0 +1,30 @@
+/* Runtime-themable CSS variables (light/dark) */
+:root {
+  --bg: #0c0f14;
+  --card: #121720;
+  --text: #0b1220; /* will be overridden in dark below */
+  --muted: #4b5563;
+  --accent: #4aa3ff;
+  --accent-forecast: rgba(74, 163, 255, 0.45);
+  --current-border: #ffd166;
+}
+
+/* Light scheme */
+@media (prefers-color-scheme: light) {
+  :root {
+    --bg: #f6f8fb;
+    --card: #ffffff;
+    --text: #111827;
+    --muted: #6b7280;
+  }
+}
+
+/* Dark scheme */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0c0f14;
+    --card: #121720;
+    --text: #e6eef7;
+    --muted: #9fb0c3;
+  }
+}
