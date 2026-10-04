@@ -6,6 +6,40 @@
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <title>Elpriser</title>
+    <script>
+      /*
+       * Tesla 2026.26 raised the in-car browser's default zoom: on the same 1920x1200
+       * panel devicePixelRatio went 1.0 -> ~1.53, so every CSS px paints ~1.53x larger
+       * and the CSS canvas shrank to ~773x601. There is no user zoom to undo it.
+       *
+       * Zoom the root by 1/dpr to restore the original physical size, and give it an
+       * explicit canvas plus --vw/--vh/--dvh, because vw/vh and percentage heights
+       * otherwise keep resolving against the un-zoomed viewport.
+       *
+       * Gated on the 1920x1200 physical panel, so phones, retina laptops and
+       * pre-update cars (dpr 1.0) are untouched.
+       */
+      (function restoreTeslaScale() {
+        var PANEL_WIDTH = 1920;
+        var PANEL_HEIGHT = 1200;
+        var TOLERANCE = 40;
+
+        var dpr = window.devicePixelRatio || 1;
+        if (dpr <= 1.01) return;
+        if (Math.abs(Math.round(screen.width * dpr) - PANEL_WIDTH) > TOLERANCE) return;
+        if (Math.abs(Math.round(screen.height * dpr) - PANEL_HEIGHT) > TOLERANCE) return;
+
+        var canvasWidth = window.innerWidth * dpr;
+        var canvasHeight = window.innerHeight * dpr;
+        var root = document.documentElement;
+        root.style.zoom = String(1 / dpr);
+        root.style.width = canvasWidth + 'px';
+        root.style.height = canvasHeight + 'px';
+        root.style.setProperty('--vw', canvasWidth / 100 + 'px');
+        root.style.setProperty('--vh', canvasHeight / 100 + 'px');
+        root.style.setProperty('--dvh', canvasHeight / 100 + 'px');
+      })();
+    </script>
   </head>
   <body>
     <div id="app"></div>

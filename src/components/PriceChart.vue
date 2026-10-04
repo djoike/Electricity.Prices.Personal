@@ -244,7 +244,7 @@ watch(() => props.points, () => {
   overflow-x: auto;
   overflow-y: hidden;
   max-width: 100%;
-  height: 80vh; /* adjust height here */
+  height: calc(var(--vh) * 80); /* adjust height here */
   -webkit-overflow-scrolling: touch;
 }
 
